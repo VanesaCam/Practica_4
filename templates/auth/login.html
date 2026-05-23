@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Iniciar sesion — C++ Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#4f46e5;--accent2:#3730a3;--accent-light:#ede9fe;--border:#e0e7ff;--border2:#c7d2fe;
+  --text:#1e1b4b;--text2:#6366f1;--text3:#9ca3af;--red:#dc2626;--surface:#f5f7ff;--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#1a3a6b 0%,#1e4d8c 50%,#1565c0 100%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.wrap{width:100%;max-width:420px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:38px 34px;
+  box-shadow:0 20px 60px rgba(79,70,229,.12);}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.logo-mark{width:38px;height:38px;background:linear-gradient(135deg,var(--accent2),var(--accent));
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#fff;}
+.logo-name{font-size:18px;font-weight:800;color:var(--text);}
+.logo-name em{color:var(--accent);font-style:normal;}
+.title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:5px;}
+.sub{font-size:13.5px;color:var(--text3);margin-bottom:26px;line-height:1.5;}
+.fg{margin-bottom:15px;}
+.fl{display:block;font-size:10.5px;font-weight:700;color:var(--text2);margin-bottom:6px;
+  letter-spacing:.4px;text-transform:uppercase;}
+.fi{width:100%;background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--r);
+  padding:10px 13px;font-size:14px;color:var(--text);outline:none;transition:all .18s;}
+.fi:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.1);}
+.pw-wrap{position:relative;}
+.pw-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;
+  cursor:pointer;font-size:11.5px;color:var(--text3);font-family:'Outfit',sans-serif;font-weight:500;}
+.pw-btn:hover{color:var(--accent);}
+.fi.pw{padding-right:68px;}
+.err-box{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);
+  padding:10px 13px;font-size:13px;color:var(--red);margin-bottom:16px;
+  display:flex;align-items:flex-start;gap:8px;}
+.btn{width:100%;background:var(--accent);border:none;border-radius:var(--r);padding:12px;
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;
+  transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,70,229,.3);}
+.footer{text-align:center;font-size:13px;color:var(--text3);margin-top:20px;}
+.link{color:var(--accent);font-weight:600;cursor:pointer;}
+.link:hover{color:var(--accent2);}
+.demo{background:var(--accent-light);border:1px solid var(--border2);border-radius:var(--r);
+  padding:10px 13px;font-size:12px;color:var(--accent2);margin-top:18px;line-height:1.7;}
+.demo strong{color:var(--accent);}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+  <div class="logo">
+    <div class="logo-mark">C++</div>
+    <div class="logo-name">C++<em>Academy</em></div>
+  </div>
+  <h1 class="title">Iniciar sesion</h1>
+  <p class="sub">Accede a tu cuenta para continuar aprendiendo C++.</p>
 
+  {% if error %}
+  <div class="err-box">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+    <div class="fg">
+      <label class="fl">Correo electronico</label>
+      <input class="fi" type="email" name="email" placeholder="tucorreo@email.com" autocomplete="email" required>
+    </div>
+    <div class="fg">
+      <label class="fl">Contrasena</label>
+      <div class="pw-wrap">
+        <input class="fi pw" type="password" id="pw" name="password" placeholder="••••••••" required>
+        <button type="button" class="pw-btn" onclick="this.previousElementSibling.type=this.previousElementSibling.type==='password'?'text':'password';this.textContent=this.previousElementSibling.type==='password'?'Mostrar':'Ocultar'">Mostrar</button>
+      </div>
+    </div>
+    <button class="btn" type="submit" id="sb">Entrar</button>
+  </form>
+  <div class="footer">
+    No tienes cuenta? <a href="{{ url_for('auth.registro') }}" class="link">Registrate</a>
+  </div>
+  <div class="demo">
+    <strong>Cuenta de prueba admin:</strong><br>
+    admin@sistema.com &nbsp;/&nbsp; admin123
+  </div>
+</div>
+</div>
+<script>
+document.querySelector('form').addEventListener('submit',function(){
+  const b=document.getElementById('sb');
+  b.innerHTML='<div class="spin"></div> Verificando...';b.disabled=true;
+});
+</script>
+</body>
+</html>
