@@ -26,63 +26,20 @@ def registrar_usuario(nombre, apellido, email, password, nivel='desde_cero'):
         conn.close()
 
 def verificar_login(email, password):
-    # Verificar bloqueo temporal
-    if session.get('bloqueado_hasta'):
-
-        if time.time() < session['bloqueado_hasta']:
-            return False, 'Cuenta bloqueada temporalmente. Intenta nuevamente en 60 segundos.'
-
-        else:
-            session.pop('bloqueado_hasta')
-            session.pop('intentos_fallidos', None)
-
     if not email or not password:
         return False, 'Ingresa tu correo y contrasena.'
-
     conn = get_connection()
-
-    row = conn.execute(
-        'SELECT id,password_hash,activo FROM usuarios WHERE email=?',
-        (email.lower().strip(),)
-    ).fetchone()
-
+    row  = conn.execute('SELECT id,password_hash,activo FROM usuarios WHERE email=?',
+                        (email.lower().strip(),)).fetchone()
     conn.close()
-
-    # Usuario no existe
     if not row:
-
-        session['intentos_fallidos'] = session.get('intentos_fallidos', 0) + 1
-
-        if session['intentos_fallidos'] >= 3:
-
-            session['bloqueado_hasta'] = time.time() + 60
-
-            return False, 'Cuenta bloqueada por multiples intentos fallidos.'
-
         return False, 'No existe cuenta con ese correo.'
-
-    # Usuario desactivado
     if not row['activo']:
         return False, 'Tu cuenta esta desactivada.'
-
-    # Contraseña incorrecta
     if not check_password_hash(row['password_hash'], password):
-
-        session['intentos_fallidos'] = session.get('intentos_fallidos', 0) + 1
-
-        if session['intentos_fallidos'] >= 3:
-
-            session['bloqueado_hasta'] = time.time() + 60
-
-            return False, 'Cuenta bloqueada por multiples intentos fallidos.'
-
         return False, 'Contrasena incorrecta.'
-
-    # Login exitoso → reiniciar contador
-    session.pop('intentos_fallidos', None)
-    session.pop('bloqueado_hasta', None)
-
     return True, User.get_by_id(row['id'])
+
 
 def actualizar_perfil(user_id, nombre, apellido):
     conn = get_connection()
