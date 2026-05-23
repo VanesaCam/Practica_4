@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar sesion — cppLearn</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070a0f;--bg2:#0c1018;--surface:#171d2c;--accent:#3b82f6;--accent2:#1d4ed8;--cyan:#06b6d4;--red:#ef4444;--green:#10b981;--text:#e2e8f0;--text2:#7c8ca0;--text3:#374151;--border:rgba(255,255,255,0.06);--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Figtree',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(59,130,246,.09) 0%,transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(6,182,212,.06) 0%,transparent 50%);pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.018) 1px,transparent 1px);background-size:52px 52px;pointer-events:none;}
+.auth-wrap{width:100%;max-width:420px;position:relative;z-index:1;}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:36px 32px;animation:cardIn .5s cubic-bezier(.16,1,.3,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--accent2),var(--cyan));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.logo-text{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.3px;}
+.logo-text em{color:var(--cyan);font-style:normal;}
+.auth-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:-.4px;}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5;}
+.form-group{margin-bottom:15px;}
+.form-label{display:block;font-size:10.5px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;font-size:13px;color:var(--text);font-family:'Figtree',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input::placeholder{color:var(--text3);}
+.form-input:focus{border-color:rgba(59,130,246,.45);box-shadow:0 0 0 3px rgba(59,130,246,.07);}
+.error-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:var(--r);padding:10px 13px;font-size:12.5px;color:#fca5a5;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px;}
+.error-icon{flex-shrink:0;margin-top:1px;}
+.btn{width:100%;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:var(--r);padding:11px;font-family:'Figtree',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(59,130,246,.35);}
+.auth-footer{text-align:center;font-size:12.5px;color:var(--text2);margin-top:20px;}
+.auth-link{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+.auth-link:hover{color:var(--text);}
+.pw-wrap{position:relative;}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text2);font-size:11px;font-family:'Figtree',sans-serif;font-weight:500;}
+.pw-toggle:hover{color:var(--text);}
+.form-input.pw-pad{padding-right:64px;}
+.demo-box{background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.15);border-radius:var(--r);padding:10px 13px;font-size:11.5px;color:var(--text2);margin-top:18px;line-height:1.6;}
+.demo-box strong{color:var(--cyan);}
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark">C++</div>
+      <div class="logo-text">cpp<em>Learn</em></div>
+    </div>
+
+    <h1 class="auth-title">Iniciar sesion</h1>
+    <p class="auth-sub">Accede a tu cuenta para continuar aprendiendo C++.</p>
+
+    {% if error %}
+    <div class="error-box">
+      <span class="error-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </span>
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="email">Correo electronico</label>
+        <input class="form-input" type="email" id="email" name="email"
+               placeholder="tucorreo@email.com" autocomplete="email" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Contrasena</label>
+        <div class="pw-wrap">
+          <input class="form-input pw-pad" type="password" id="password" name="password"
+                 placeholder="••••••••" autocomplete="current-password" required>
+          <button type="button" class="pw-toggle" onclick="togglePw('password',this)">Mostrar</button>
+        </div>
+      </div>
+
+      <button class="btn" type="submit" id="submit-btn">Entrar</button>
+    </form>
+
+    <div class="auth-footer">
+      No tienes cuenta?
+      <a href="{{ url_for('auth.registro') }}" class="auth-link">Registrate gratis</a>
+    </div>
+
+    <div class="demo-box">
+      <strong>Cuenta de prueba admin:</strong><br>
+      admin@cpplearn.com &nbsp;/&nbsp; admin123
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePw(id, btn) {
+  const i = document.getElementById(id);
+  const show = i.type === 'password';
+  i.type = show ? 'text' : 'password';
+  btn.textContent = show ? 'Ocultar' : 'Mostrar';
+}
+document.querySelector('form').addEventListener('submit', function() {
+  const btn = document.getElementById('submit-btn');
+  btn.innerHTML = '<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Verificando...';
+  btn.disabled = true;
+});
+</script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</body>
+</html>
