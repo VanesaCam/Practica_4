@@ -1,0 +1,243 @@
+{% extends "shared/base.html" %}
+{% block title %}Modulo {{ mod.numero }} — {{ mod.titulo }}{% endblock %}
+{% block page_title %}Modulo {{ mod.numero }} — {{ mod.titulo }}{% endblock %}
+
+{% block content %}
+<style>
+.mod-hero{background:linear-gradient(118deg,rgba(29,78,216,.14) 0%,rgba(6,182,212,.06) 100%);border:1px solid rgba(59,130,246,.14);border-radius:14px;padding:24px 28px;margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;}
+.mod-hero-left{}
+.mod-num-badge{display:inline-flex;align-items:center;gap:7px;margin-bottom:8px;}
+.mod-number{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1px;}
+.mod-title-big{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px;}
+.mod-desc{font-size:13px;color:var(--text2);max-width:520px;line-height:1.6;margin-bottom:14px;}
+.mod-meta-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.mod-meta-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text2);}
+.mod-meta-item svg{width:12px;height:12px;opacity:.6;}
+.mod-hero-right{text-align:right;flex-shrink:0;}
+.mod-pct-circle{width:72px;height:72px;position:relative;margin:0 auto 6px;}
+.pct-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent);}
+
+.tabs{display:flex;gap:3px;background:var(--surface);padding:3px;border-radius:9px;width:fit-content;margin-bottom:20px;}
+.tab-btn{padding:7px 16px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:none;font-family:'Figtree',sans-serif;transition:all .13s;}
+.tab-btn.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.35);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+
+/* Lecciones */
+.lec-list{display:flex;flex-direction:column;gap:8px;}
+.lec-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all .14s;text-decoration:none;color:inherit;}
+.lec-item:hover{border-color:rgba(59,130,246,.22);background:var(--bg3);}
+.lec-num{width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,.1);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0;}
+.lec-body{flex:1;}
+.lec-title{font-weight:600;font-size:13px;margin-bottom:3px;}
+.lec-sub{font-size:11px;color:var(--text3);}
+.lec-arrow{color:var(--text3);flex-shrink:0;margin-top:6px;}
+
+/* Ejercicios */
+.ej-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.ej-grid{grid-template-columns:1fr;}}
+.ej-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .18s;}
+.ej-card:hover{border-color:rgba(59,130,246,.2);}
+.ej-card.done{border-color:rgba(16,185,129,.25);}
+.ej-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.ej-title{font-weight:600;font-size:13px;margin-bottom:3px;}
+.ej-desc{font-size:11.5px;color:var(--text2);}
+.ej-body{padding:14px 16px;}
+.code-block{background:#050810;border:1px solid rgba(255,255,255,.04);border-radius:8px;padding:13px;font-family:'Space Mono',monospace;font-size:11px;line-height:1.7;overflow-x:auto;position:relative;}
+.code-block::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:linear-gradient(180deg,var(--accent),var(--cyan));}
+.blank{display:inline-block;min-width:60px;border-bottom:2px solid var(--accent);color:var(--accent);background:rgba(59,130,246,.07);border-radius:3px;padding:0 5px;outline:none;font-family:'Space Mono',monospace;font-size:11px;}
+.blank:focus{background:rgba(59,130,246,.12);}
+.ans-opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;}
+.ans-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:8px 10px;text-align:left;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;color:var(--text2);transition:all .12s;}
+.ans-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:rgba(59,130,246,.05);}
+.ans-btn.correct{border-color:var(--green);background:rgba(16,185,129,.09);color:var(--green);}
+.ans-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.07);color:var(--red);}
+.ej-foot{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.013);}
+.hint-box{margin-top:8px;padding:9px 12px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.16);border-radius:8px;font-size:11.5px;color:var(--text2);display:none;line-height:1.55;}
+.hint-box strong{color:var(--amber);}
+.result-badge{display:none;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:6px;}
+.result-badge.ok{background:rgba(16,185,129,.12);color:var(--green);display:flex;}
+.result-badge.fail{background:rgba(239,68,68,.1);color:var(--red);display:flex;}
+.attempts{font-size:10px;color:var(--text3);}
+</style>
+
+<!-- MOD HERO -->
+<div class="mod-hero anim">
+  <div class="mod-hero-left">
+    <div class="mod-num-badge">
+      <span class="mod-number">MODULO {{ '%02d'|format(mod.numero) }}</span>
+      <span class="tag {% if mod.nivel == 'Basico' %}tag-green{% elif mod.nivel == 'Intermedio' %}tag-amber{% else %}tag-red{% endif %}">{{ mod.nivel }}</span>
+    </div>
+    <h1 class="mod-title-big">{{ mod.titulo }}</h1>
+    <p class="mod-desc">{{ mod.descripcion }}</p>
+    <div class="mod-meta-row">
+      <div class="mod-meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        {{ mod.total_lecciones }} lecciones
+      </div>
+      <div class="mod-meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        {{ mod.total_ejercicios }} ejercicios
+      </div>
+      <div class="mod-meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ~{{ mod.total_lecciones * 8 }} min lectura
+      </div>
+    </div>
+  </div>
+  <div class="mod-hero-right">
+    <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-align:center">Tu progreso</div>
+    <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--accent);text-align:center">
+      {{ ejercicios|selectattr('correcto','eq',1)|list|length }}/{{ ejercicios|length }}
+    </div>
+    <div style="font-size:10px;color:var(--text3);text-align:center">ejercicios correctos</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs anim anim-d1">
+  <button class="tab-btn active" onclick="switchTab(this,'lecciones')">Lecciones</button>
+  <button class="tab-btn" onclick="switchTab(this,'ejercicios')">Ejercicios</button>
+  <button class="tab-btn" onclick="switchTab(this,'recursos')">Recursos</button>
+</div>
+
+<!-- TAB: LECCIONES -->
+<div id="tab-lecciones" class="tab-pane active anim anim-d2">
+  {% if lecciones %}
+  <div class="lec-list">
+    {% for lec in lecciones %}
+    <a href="{{ url_for('course.leccion', mod_num=mod.numero, lec_num=lec.numero) }}" class="lec-item">
+      <div class="lec-num">{{ '%02d'|format(lec.numero) }}</div>
+      <div class="lec-body">
+        <div class="lec-title">{{ lec.titulo }}</div>
+        <div class="lec-sub">Leccion {{ lec.numero }} de {{ lecciones|length }}</div>
+      </div>
+      <div class="lec-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card"><div class="card-body text-muted">Las lecciones de este modulo estaran disponibles pronto.</div></div>
+  {% endif %}
+</div>
+
+<!-- TAB: EJERCICIOS -->
+<div id="tab-ejercicios" class="tab-pane">
+  {% if ejercicios %}
+  <div class="ej-grid">
+    {% for ej in ejercicios %}
+    <div class="ej-card {% if ej.correcto %}done{% endif %}" id="ej-card-{{ ej.id }}">
+      <div class="ej-head">
+        <div>
+          <div class="ej-title">{{ ej.titulo }}</div>
+          <div class="ej-desc">{{ ej.descripcion }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+          <span class="tag {% if ej.dificultad == 'Basico' %}tag-green{% elif ej.dificultad == 'Intermedio' %}tag-amber{% else %}tag-red{% endif %}">{{ ej.dificultad }}</span>
+          {% if ej.intentos > 0 %}
+          <span class="attempts">{{ ej.intentos }} intento{{ 's' if ej.intentos != 1 }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="ej-body">
+        {% if ej.codigo_base %}
+        <div class="code-block">{{ ej.codigo_base }}</div>
+        {% endif %}
+
+        <!-- Opciones de respuesta -->
+        {% set opts = [ej.respuesta, 'cout', 'a + b', '/', '*=', '"C++"', 'a - b', 'return 0'] %}
+        <div class="ans-opts" id="opts-{{ ej.id }}">
+          {% for opt in opts[:4] %}
+          <button class="ans-btn {% if ej.correcto and opt == ej.respuesta %}correct{% endif %}"
+                  onclick="responder({{ ej.id }}, '{{ opt }}', this)"
+                  {% if ej.correcto %}disabled{% endif %}>
+            {{ opt }}
+          </button>
+          {% endfor %}
+        </div>
+
+        <div class="hint-box" id="hint-{{ ej.id }}">
+          <strong>Pista:</strong> {{ ej.pista or 'Analiza el codigo con calma.' }}
+        </div>
+      </div>
+      <div class="ej-foot">
+        <button class="btn btn-secondary btn-sm" onclick="toggleHint({{ ej.id }})">Ver pista</button>
+        <div class="result-badge {% if ej.correcto %}ok{% endif %}" id="result-{{ ej.id }}">
+          {% if ej.correcto %}Correcto +50 XP{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card"><div class="card-body text-muted">Los ejercicios de este modulo estaran disponibles pronto.</div></div>
+  {% endif %}
+</div>
+
+<!-- TAB: RECURSOS -->
+<div id="tab-recursos" class="tab-pane">
+  <div class="card">
+    <div class="card-body">
+      <div class="section-title mb-4">Referencias y documentacion</div>
+      <div class="text-muted">
+        <p style="margin-bottom:10px">Recursos recomendados para este modulo:</p>
+        <ul style="padding-left:18px;line-height:2;color:var(--text2);font-size:13px">
+          <li>cppreference.com — Documentacion oficial del estandar C++</li>
+          <li>learncpp.com — Tutorial gratuito completo en ingles</li>
+          <li>isocpp.org — Comunidad y recursos oficiales de ISO C++</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(btn, name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function toggleHint(id) {
+  const h = document.getElementById('hint-' + id);
+  h.style.display = h.style.display === 'block' ? 'none' : 'block';
+}
+
+function responder(ejId, respuesta, btn) {
+  // Deshabilitar todos los botones del ejercicio
+  const opts = document.querySelectorAll('#opts-' + ejId + ' .ans-btn');
+  opts.forEach(b => b.disabled = true);
+
+  fetch('/ejercicio/' + ejId + '/responder', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({respuesta: respuesta})
+  })
+  .then(r => r.json())
+  .then(data => {
+    // Marcar la opcion elegida
+    if (data.correcto) {
+      btn.classList.add('correct');
+      // Marcar la correcta en todos los botones
+      opts.forEach(b => { if (b.textContent.trim() === respuesta) b.classList.add('correct'); });
+      const res = document.getElementById('result-' + ejId);
+      res.className = 'result-badge ok';
+      res.textContent = 'Correcto +' + data.xp_ganado + ' XP';
+      document.getElementById('ej-card-' + ejId).classList.add('done');
+      showToast('Correcto. +' + data.xp_ganado + ' XP ganados.', 'ok');
+    } else {
+      btn.classList.add('wrong');
+      const res = document.getElementById('result-' + ejId);
+      res.className = 'result-badge fail';
+      res.textContent = 'Incorrecto. Intenta de nuevo.';
+      // Permitir reintentar
+      setTimeout(() => { opts.forEach(b => { b.disabled = false; b.classList.remove('wrong'); }); }, 1200);
+      showToast('Respuesta incorrecta. Revisa la pista.', 'err');
+    }
+  })
+  .catch(() => showToast('Error de conexion.', 'err'));
+}
+</script>
+{% endblock %}
