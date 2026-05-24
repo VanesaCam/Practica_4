@@ -1,1 +1,94 @@
+{% extends "shared/base.html" %}
+{% block title %}Panel Admin{% endblock %}
+{% block page_title %}Administracion — Estudiantes{% endblock %}
+{% block content %}
+<style>
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.adstat{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:18px 20px;box-shadow:var(--shadow);}
+.adstat-val{font-size:28px;font-weight:800;margin-bottom:3px;letter-spacing:-1px;}
+.adstat-lbl{font-size:11.5px;color:var(--text3);font-weight:500;}
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.tbl-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);background:var(--surface);}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text);}
+tr:last-child td{border:none;}
+tr:hover td{background:var(--accent-light);}
+.u-cell{display:flex;align-items:center;gap:9px;}
+.u-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.u-name{font-weight:600;font-size:13px;}
+.u-email{font-size:11px;color:var(--text3);}
+.dot-g{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;}
+.dot-r{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:5px;}
+.ruta-badge{font-size:10px;color:var(--accent2);background:var(--accent-light);border-radius:4px;padding:1px 6px;font-weight:600;}
+</style>
 
+<div class="admin-stats anim">
+  <div class="adstat">
+    <div class="adstat-val" style="color:var(--accent)">{{ stats_global.total }}</div>
+    <div class="adstat-lbl">Usuarios registrados</div>
+  </div>
+  <div class="adstat">
+    <div class="adstat-val" style="color:var(--green)">{{ stats_global.activos }}</div>
+    <div class="adstat-lbl">Usuarios activos</div>
+  </div>
+  <div class="adstat">
+    <div class="adstat-val" style="color:var(--cyan)">{{ stats_global.estudiantes }}</div>
+    <div class="adstat-lbl">Estudiantes</div>
+  </div>
+</div>
+
+<div class="tbl-wrap anim anim-d1">
+  <div class="tbl-head">
+    <span class="card-title">Todos los estudiantes</span>
+    <span class="tag tag-indigo">{{ usuarios|length }} registros</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Estudiante</th>
+        <th>Ruta</th>
+        <th>XP</th>
+        <th>Nivel</th>
+        <th>Estado</th>
+        <th>Registro</th>
+        <th>Detalle</th>
+        <th>Accion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td><div class="u-cell">
+          <div class="u-av">{{ (u.nombre[0]+u.apellido[0]).upper() }}</div>
+          <div><div class="u-name">{{ u.nombre }} {{ u.apellido }}</div><div class="u-email">{{ u.email }}</div></div>
+        </div></td>
+        <td><span class="ruta-badge">{{ {'desde_cero':'Desde cero','con_conocimientos':'Con conocimientos','reforzar':'Reforzar'}.get(u.ruta_aprendizaje,'N/A') }}</span></td>
+        <td style="font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);font-weight:700">{{ u.xp }}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:12px">{{ u.nivel }}</td>
+        <td><span class="{% if u.activo %}dot-g{% else %}dot-r{% endif %}"></span>{{ 'Activo' if u.activo else 'Inactivo' }}</td>
+        <td style="color:var(--text3);font-size:11.5px">{{ u.fecha_registro[:10] }}</td>
+        <td>
+          {% if u.rol == 'Estudiante' %}
+          <a href="{{ url_for('course.admin_estudiante', uid=u.id) }}" class="btn btn-secondary btn-sm">Ver detalle</a>
+          {% else %}
+          <span style="font-size:11px;color:var(--text3)">Admin</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if u.id != current_user.id %}
+          <form method="POST" action="{{ url_for('course.admin_toggle', uid=u.id) }}" style="display:inline">
+            <button type="submit" class="btn btn-sm {% if u.activo %}btn-danger{% else %}btn-secondary{% endif %}">
+              {{ 'Desactivar' if u.activo else 'Activar' }}
+            </button>
+          </form>
+          {% else %}
+          <span style="font-size:11px;color:var(--text3)">Tu cuenta</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
