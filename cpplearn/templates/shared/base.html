@@ -1,1 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}cppLearn{% endblock %} — Plataforma de C++</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══ VARIABLES ══════════════════════════════════════════════════ */
+:root {
+  --bg:       #070a0f;
+  --bg2:      #0c1018;
+  --bg3:      #111520;
+  --surface:  #171d2c;
+  --surface2: #1e2538;
+  --accent:   #3b82f6;
+  --accent2:  #1d4ed8;
+  --cyan:     #06b6d4;
+  --green:    #10b981;
+  --amber:    #f59e0b;
+  --red:      #ef4444;
+  --text:     #e2e8f0;
+  --text2:    #7c8ca0;
+  --text3:    #374151;
+  --border:   rgba(255,255,255,0.055);
+  --r:        10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Figtree',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(59,130,246,0.06) 0%,transparent 55%),radial-gradient(ellipse at 0% 100%,rgba(6,182,212,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;}
+input,select,textarea{font-family:'Figtree',sans-serif;}
 
+/* ══ LAYOUT ═════════════════════════════════════════════════════ */
+.app-shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ══ SIDEBAR ════════════════════════════════════════════════════ */
+.sidebar{
+  width:240px;flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;
+  z-index:100;
+}
+.sb-logo{
+  display:flex;align-items:center;gap:10px;
+  padding:20px 18px 18px;
+  border-bottom:1px solid var(--border);
+}
+.sb-logo-mark{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--accent2),var(--cyan));
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;color:#fff;
+  flex-shrink:0;
+  letter-spacing:-0.5px;
+}
+.sb-logo-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;}
+.sb-logo-name em{color:var(--cyan);font-style:normal;}
+.sb-nav{flex:1;padding:14px 10px;overflow-y:auto;}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:12px 8px 5px;}
+.sb-link{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:8px;
+  font-size:12.5px;font-weight:500;color:var(--text2);
+  transition:all .14s;margin-bottom:1px;
+  position:relative;
+}
+.sb-link:hover{background:var(--surface);color:var(--text);}
+.sb-link.active{background:rgba(59,130,246,.12);color:var(--accent);}
+.sb-link.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:52%;background:var(--accent);border-radius:0 3px 3px 0;}
+.sb-link svg{width:15px;height:15px;opacity:.65;flex-shrink:0;}
+.sb-link.active svg{opacity:1;}
+.sb-badge{margin-left:auto;background:var(--accent2);color:#fff;font-size:9px;padding:1px 6px;border-radius:20px;font-weight:700;}
+.sb-foot{padding:14px 12px;border-top:1px solid var(--border);}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 6px;border-radius:var(--r);transition:background .14s;}
+.sb-user:hover{background:var(--surface);}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-user-info{flex:1;min-width:0;}
+.sb-user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-user-role{font-size:10px;color:var(--cyan);margin-top:1px;}
+.sb-logout{background:none;border:none;color:var(--text3);padding:3px;border-radius:5px;transition:color .14s;flex-shrink:0;}
+.sb-logout:hover{color:var(--red);}
+
+/* ══ MAIN ═══════════════════════════════════════════════════════ */
+.main-area{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 26px;
+  border-bottom:1px solid var(--border);
+  background:rgba(7,10,15,.85);
+  backdrop-filter:blur(14px);
+  position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;}
+.topbar-pills{display:flex;align-items:center;gap:8px;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:var(--surface);}
+.pill-amber{border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.08);color:var(--amber);}
+.pill-blue{border-color:rgba(59,130,246,.25);background:rgba(59,130,246,.08);color:var(--accent);}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.page-content{padding:26px;flex:1;}
+
+/* ══ FLASH ══════════════════════════════════════════════════════ */
+.flash-list{list-style:none;margin-bottom:18px;}
+.flash-item{padding:10px 14px;border-radius:var(--r);font-size:12.5px;margin-bottom:6px;border:1px solid;}
+.flash-success{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:#6ee7b7;}
+.flash-info{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25);color:#93c5fd;}
+.flash-error{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#fca5a5;}
+
+/* ══ CARDS ══════════════════════════════════════════════════════ */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;overflow:hidden;}
+.card-body{padding:20px;}
+.card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+
+/* ══ FORMS ══════════════════════════════════════════════════════ */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase;}
+.form-input{
+  width:100%;background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:10px 13px;
+  font-size:13px;color:var(--text);
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.form-input::placeholder{color:var(--text3);}
+.form-input:focus{border-color:rgba(59,130,246,.45);box-shadow:0 0 0 3px rgba(59,130,246,.07);}
+.form-input.is-error{border-color:rgba(239,68,68,.45);box-shadow:0 0 0 3px rgba(239,68,68,.06);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ══ BUTTONS ════════════════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:var(--r);font-family:'Figtree',sans-serif;font-size:13px;font-weight:600;border:none;transition:all .18s;cursor:pointer;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.35);}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-secondary:hover{color:var(--text);border-color:rgba(255,255,255,.12);}
+.btn-danger{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.btn-danger:hover{background:rgba(239,68,68,.2);}
+.btn-sm{padding:5px 12px;font-size:11.5px;}
+.btn-full{width:100%;}
+.btn-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ TAGS ═══════════════════════════════════════════════════════ */
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.tag-green{background:rgba(16,185,129,.13);color:var(--green);}
+.tag-amber{background:rgba(245,158,11,.13);color:var(--amber);}
+.tag-red{background:rgba(239,68,68,.13);color:var(--red);}
+.tag-blue{background:rgba(59,130,246,.13);color:var(--accent);}
+
+/* ══ PROGRESS ═══════════════════════════════════════════════════ */
+.prog-bar-wrap{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--cyan));border-radius:2px;transition:width .8s cubic-bezier(.16,1,.3,1);}
+.prog-bar-wrap.sm{height:3px;}
+
+/* ══ TOAST ══════════════════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:20px;right:20px;z-index:9999;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:11px;padding:11px 16px;
+  display:none;align-items:center;gap:10px;
+  font-size:12.5px;max-width:300px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+#toast.show{display:flex;animation:toastIn .35s cubic-bezier(.16,1,.3,1) both;}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.toast-icon{font-size:14px;flex-shrink:0;}
+
+/* ══ CODE ═══════════════════════════════════════════════════════ */
+.code-block{
+  background:#060912;border:1px solid rgba(255,255,255,.04);
+  border-radius:var(--r);padding:16px;
+  font-family:'Space Mono',monospace;font-size:12px;line-height:1.8;
+  overflow-x:auto;position:relative;
+}
+.code-block::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:linear-gradient(180deg,var(--accent),var(--cyan));}
+.kw{color:#ff79c6;}.ty{color:#8be9fd;}.st{color:#f1fa8c;}
+.cm{color:#44556a;font-style:italic;}.fn{color:#50fa7b;}.nm{color:#bd93f9;}
+
+/* ══ MISC ═══════════════════════════════════════════════════════ */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.text-muted{color:var(--text2);font-size:13px;}
+.mt-4{margin-top:16px;}
+.mt-6{margin-top:24px;}
+.mb-4{margin-bottom:16px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .45s ease both;}
+.anim-d1{animation-delay:.06s;}
+.anim-d2{animation-delay:.12s;}
+.anim-d3{animation-delay:.18s;}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+{% if current_user.is_authenticated %}
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">C++</div>
+      <div class="sb-logo-name">cpp<em>Learn</em></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Principal</div>
+      <a href="{{ url_for('course.dashboard') }}" class="sb-link {% if request.endpoint == 'course.dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Inicio
+      </a>
+      <a href="{{ url_for('course.perfil') }}" class="sb-link {% if request.endpoint == 'course.perfil' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Mi perfil
+      </a>
+      {% if current_user.es_admin %}
+      <div class="sb-section">Administracion</div>
+      <a href="{{ url_for('course.admin_panel') }}" class="sb-link {% if request.endpoint == 'course.admin_panel' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Panel Admin
+      </a>
+      {% endif %}
+      <div class="sb-section">Modulos</div>
+      {% for i in range(1, 9) %}
+      <a href="{{ url_for('course.modulo', numero=i) }}" class="sb-link {% if request.endpoint == 'course.modulo' and request.view_args.numero == i %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Modulo {{ i }}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-avatar">{{ current_user.iniciales }}</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">{{ current_user.nombre }}</div>
+          <div class="sb-user-role">{{ current_user.rol_nombre }}</div>
+        </div>
+        <a href="{{ url_for('auth.logout') }}" class="sb-logout" title="Cerrar sesion">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-title">{% block page_title %}cppLearn{% endblock %}</div>
+      <div class="topbar-pills">
+        <span class="pill pill-amber"><span class="pill-dot"></span>{{ current_user.racha }} dias racha</span>
+        <span class="pill pill-blue"><span class="pill-dot"></span>{{ current_user.xp }} XP</span>
+      </div>
+    </header>
+
+    <main class="page-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-list">
+          {% for cat, msg in messages %}
+          <li class="flash-item flash-{{ cat }}">{{ msg }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+{% block auth_content %}{% endblock %}
+{% endif %}
+
+<!-- TOAST -->
+<div id="toast"><span class="toast-icon" id="toast-icon"></span><span id="toast-msg"></span></div>
+
+<script>
+function showToast(msg, type) {
+  const t   = document.getElementById('toast');
+  const ico = document.getElementById('toast-icon');
+  const txt = document.getElementById('toast-msg');
+  const icons = {ok:'&#10003;', err:'&#10007;', info:'&#9432;'};
+  const bords = {ok:'rgba(16,185,129,.3)', err:'rgba(239,68,68,.3)', info:'rgba(59,130,246,.3)'};
+  ico.innerHTML = icons[type] || icons.info;
+  txt.textContent = msg;
+  t.style.borderColor = bords[type] || bords.info;
+  t.classList.remove('show');
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 3200);
+}
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

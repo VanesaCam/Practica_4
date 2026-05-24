@@ -1,0 +1,14 @@
+{% extends "shared/base.html" %}
+{% block title %}Error {{ codigo }}{% endblock %}
+{% block page_title %}Error{% endblock %}
+
+{% block content %}
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center">
+  <div style="font-family:'Space Mono',monospace;font-size:72px;font-weight:700;color:rgba(59,130,246,.12);line-height:1;margin-bottom:16px">{{ codigo }}</div>
+  <h1 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">
+    {% if codigo == 403 %}Acceso denegado{% elif codigo == 404 %}Pagina no encontrada{% else %}Error{% endif %}
+  </h1>
+  <p style="color:var(--text2);font-size:13px;max-width:380px;margin-bottom:22px">{{ mensaje }}</p>
+  <a href="{{ url_for('course.dashboard') }}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endblock %}
