@@ -1,0 +1,207 @@
+{% extends "shared/base.html" %}
+{% block title %}Certificado — {{ u.nombre_completo }}{% endblock %}
+{% block page_title %}Mi Certificado{% endblock %}
+
+{% block extra_head %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap');
+@media print {
+  .sidebar,.main-area .topbar,.no-print{display:none!important;}
+  .main-area{margin-left:0!important;}
+  .page-content{padding:0!important;}
+  body{background:#fff!important;}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<style>
+.cert-page{max-width:860px;margin:0 auto;}
+.progress-section{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:22px;box-shadow:var(--shadow);}
+.prog-mods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.prog-mod-item{padding:11px 14px;border-radius:10px;border:1.5px solid;display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;}
+.pmi-done{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32;}
+.pmi-pend{background:#fff8e1;border-color:#ffe082;color:#f57f17;}
+
+/* CERTIFICATE */
+.cert-wrap{
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.14);
+  position:relative;
+  margin-bottom:22px;
+}
+.cert-top-bar{height:8px;background:linear-gradient(90deg,#1a3a6b,#1e88e5,#42a5f5);}
+.cert-inner{padding:48px 52px;position:relative;}
+.cert-watermark{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:140px;font-weight:700;
+  color:rgba(26,58,107,.04);line-height:1;pointer-events:none;
+  letter-spacing:-8px;
+}
+.cert-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;}
+.cert-logo-area{display:flex;align-items:center;gap:11px;}
+.cert-logo-icon{width:46px;height:46px;background:linear-gradient(135deg,#1a3a6b,#1e88e5);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#fff;}
+.cert-logo-name{font-size:18px;font-weight:800;color:#1a3a6b;}
+.cert-logo-name span{color:#1e88e5;}
+.cert-year{font-size:12px;color:#94a3b8;text-align:right;line-height:1.6;}
+.cert-seal{width:58px;height:58px;border-radius:50%;border:3px solid #1e88e5;display:flex;align-items:center;justify-content:center;font-size:22px;background:#e3f2fd;}
+
+.cert-body{text-align:center;margin-bottom:36px;}
+.cert-label{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#94a3b8;margin-bottom:10px;}
+.cert-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:#1a3a6b;margin-bottom:6px;letter-spacing:-.5px;}
+.cert-subtitle{font-size:13px;color:#94a3b8;margin-bottom:28px;}
+.cert-recipient-label{font-size:12px;color:#94a3b8;margin-bottom:8px;}
+.cert-name{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:#1a3a6b;margin-bottom:20px;letter-spacing:-.5px;}
+.cert-desc{font-size:14.5px;color:#475569;line-height:1.8;max-width:560px;margin:0 auto 28px;}
+.cert-desc strong{color:#1a3a6b;}
+
+.cert-stats{display:flex;justify-content:center;gap:36px;margin-bottom:36px;}
+.cstat{text-align:center;}
+.cstat-num{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:#1e88e5;line-height:1;}
+.cstat-lbl{font-size:11px;color:#94a3b8;margin-top:3px;font-weight:600;}
+.cert-divider{height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin:0 60px 32px;}
+
+.cert-sigs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:0 40px;}
+.sig-item{text-align:center;}
+.sig-line{height:2px;background:linear-gradient(90deg,transparent,#cbd5e1,transparent);margin-bottom:8px;}
+.sig-name{font-size:12px;font-weight:700;color:#374151;}
+.sig-role{font-size:10.5px;color:#94a3b8;}
+.cert-folio{text-align:center;padding:14px;background:#f8fafc;border-top:1px solid #e2e8f0;font-size:10.5px;color:#94a3b8;letter-spacing:.5px;}
+
+/* LOCKED CERT */
+.cert-locked{background:#fff;border:2px dashed var(--border);border-radius:14px;padding:48px;text-align:center;}
+.cert-locked-icon{font-size:48px;margin-bottom:14px;}
+.cert-locked-title{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.cert-locked-desc{font-size:14px;color:var(--text2);max-width:480px;margin:0 auto 20px;line-height:1.7;}
+.cert-prog-bar-wrap{background:var(--border);height:10px;border-radius:5px;overflow:hidden;max-width:360px;margin:0 auto 8px;}
+.cert-prog-bar-fill{height:100%;background:linear-gradient(90deg,#1a3a6b,#1e88e5);border-radius:5px;transition:width 1s ease;}
+.cert-prog-label{font-size:12px;color:var(--text3);margin-bottom:18px;}
+</style>
+
+<div class="cert-page">
+
+  <!-- Progreso hacia el certificado -->
+  <div class="progress-section no-print">
+    <div class="section-head">
+      <span class="section-title">Progreso hacia tu certificado</span>
+      <span class="tag {% if puede_certificado %}tag-green{% else %}tag-amber{% endif %}">
+        {{ total_completos }}/{{ total_ruta }} modulos
+      </span>
+    </div>
+    <div class="prog-mods">
+      {% for m in mods_usuario %}
+      <div class="prog-mod-item {% if m.completado %}pmi-done{% else %}pmi-pend{% endif %}">
+        {% if m.completado %}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        {% else %}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        {% endif %}
+        Mod. {{ m.numero }} — {{ m.titulo[:28] }}{% if m.titulo|length > 28 %}...{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if puede_certificado %}
+  <!-- CERTIFICADO COMPLETO -->
+  <div class="cert-wrap">
+    <div class="cert-top-bar"></div>
+    <div class="cert-inner">
+      <div class="cert-watermark">C++</div>
+
+      <div class="cert-header">
+        <div class="cert-logo-area">
+          <div class="cert-logo-icon">C++</div>
+          <div>
+            <div class="cert-logo-name">C++<span>Academy</span></div>
+            <div style="font-size:11px;color:#94a3b8">Plataforma educativa 2026</div>
+          </div>
+        </div>
+        <div>
+          <div class="cert-seal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e88e5" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+        </div>
+      </div>
+
+      <div class="cert-body">
+        <div class="cert-label">Certificado de Finalización</div>
+        <h1 class="cert-title">Programación en C++</h1>
+        <div class="cert-subtitle">
+          {% if u.ruta_aprendizaje == 'desde_cero' %}Curso Completo — Nivel Fundamentos a Avanzado
+          {% elif u.ruta_aprendizaje == 'intermedio' %}Curso Intermedio — Funciones, Clases y POO
+          {% else %}Curso Avanzado — Encapsulamiento, Herencia y Polimorfismo
+          {% endif %}
+        </div>
+
+        <div class="cert-recipient-label">Este certificado se otorga a</div>
+        <div class="cert-name">{{ u.nombre_completo }}</div>
+
+        <p class="cert-desc">
+          Por haber completado satisfactoriamente el curso de
+          <strong>Programación en C++</strong> en la plataforma C++ Academy,
+          demostrando dominio de los conceptos del lenguaje,
+          {% if u.ruta_aprendizaje == 'desde_cero' %}desde los fundamentos hasta programación orientada a objetos,{% elif u.ruta_aprendizaje == 'intermedio' %}incluyendo funciones, clases y programación orientada a objetos,{% else %}especialmente herencia, polimorfismo y diseño de clases,{% endif %}
+          con una precisión de <strong>{{ stats.precision }}%</strong> en los ejercicios.
+        </p>
+
+        <div class="cert-stats">
+          <div class="cstat"><div class="cstat-num">{{ total_completos }}</div><div class="cstat-lbl">Modulos completados</div></div>
+          <div class="cstat"><div class="cstat-num">{{ stats.ejercicios_resueltos }}</div><div class="cstat-lbl">Ejercicios resueltos</div></div>
+          <div class="cstat"><div class="cstat-num">{{ stats.precision }}%</div><div class="cstat-lbl">Precision</div></div>
+          <div class="cstat"><div class="cstat-num">{{ stats.xp }}</div><div class="cstat-lbl">XP acumulados</div></div>
+        </div>
+      </div>
+
+      <div class="cert-divider"></div>
+
+      <div class="cert-sigs">
+        <div class="sig-item">
+          <div class="sig-line"></div>
+          <div class="sig-name">C++ Academy</div>
+          <div class="sig-role">Directora Academica — 2026</div>
+        </div>
+        <div class="sig-item" style="border:2px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:4px">Fecha de emision</div>
+          <div style="font-weight:700;color:#1a3a6b;font-size:13px">{{ fecha_hoy }}</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px">Folio: {{ folio }}</div>
+        </div>
+        <div class="sig-item">
+          <div class="sig-line"></div>
+          <div class="sig-name">Universidad Central</div>
+          <div class="sig-role">Facultad de Ingenieria — 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-folio">Folio: {{ folio }} &nbsp;·&nbsp; C++ Academy 2026 &nbsp;·&nbsp; Certificado autentico digital</div>
+  </div>
+
+  <div class="no-print" style="text-align:center;margin-bottom:24px">
+    <button onclick="window.print()" class="btn btn-primary" style="margin-right:10px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir certificado
+    </button>
+    <a href="{{ url_for('course.dashboard') }}" class="btn btn-secondary">Volver al inicio</a>
+  </div>
+
+  {% else %}
+  <!-- CERTIFICADO BLOQUEADO -->
+  <div class="cert-locked">
+    <div style="margin-bottom:14px"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" style="display:block;margin:0 auto"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+    <div class="cert-locked-title">Certificado disponible al completar tu ruta</div>
+    <div class="cert-locked-desc">
+      Tu certificado se genera automaticamente cuando completes todos los modulos de tu nivel
+      <strong>{{ u.ruta_label }}</strong>.
+      Te faltan <strong>{{ total_ruta - total_completos }}</strong> modulo{{ 's' if (total_ruta - total_completos) != 1 }} por completar.
+    </div>
+    <div class="cert-prog-bar-wrap">
+      <div class="cert-prog-bar-fill" style="width:{{ (total_completos / total_ruta * 100)|round|int }}%"></div>
+    </div>
+    <div class="cert-prog-label">{{ total_completos }} de {{ total_ruta }} modulos completados ({{ (total_completos / total_ruta * 100)|round|int }}%)</div>
+    <a href="{{ url_for('course.dashboard') }}" class="btn btn-primary">Continuar aprendiendo &rarr;</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
