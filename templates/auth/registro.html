@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crear cuenta — C++ Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1b35;--blue:#1e88e5;--blue2:#1565c0;--blue-light:#64b5f6;--orange:#e65100;--orange2:#f57c00;--green:#2e7d32;--text:#1a202c;--text2:#4a5568;--text3:#a0aec0;--border:#e2e8f0;--surface:#f8fafc;--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;background:linear-gradient(160deg,#1a3a6b 0%,#1e4d8c 50%,#1565c0 100%);display:flex;align-items:flex-start;justify-content:center;padding:24px;}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%231565c0' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.pw{width:100%;max-width:880px;position:relative;z-index:1;margin-top:16px;}
+.back{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.6);font-size:13px;margin-bottom:20px;transition:color .2s;}
+.back:hover{color:#fff;}
+.card{background:#fff;border-radius:22px;box-shadow:0 32px 80px rgba(0,0,0,.35);overflow:hidden;}
+.ch{background:linear-gradient(135deg,var(--navy),var(--blue));padding:30px 40px;}
+.lr{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.li{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#fff;}
+.ln{font-size:15px;font-weight:800;color:#fff;}.ln span{color:var(--blue-light);}
+.ch h1{font-size:24px;font-weight:800;color:#fff;margin-bottom:5px;letter-spacing:-.5px;}
+.ch p{font-size:13.5px;color:rgba(255,255,255,.65);}
+.cb{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.fs{padding:34px 38px;}.ls{padding:34px 30px;background:var(--surface);border-left:1px solid var(--border);}
+.st{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:15px;}
+.fg{margin-bottom:13px;}
+.fl{display:block;font-size:10.5px;font-weight:700;color:var(--text2);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase;}
+.fi{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 13px;font-size:13.5px;color:var(--text);outline:none;transition:all .18s;}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,.08);background:#fff;}
+.fi.err{border-color:#e53e3e;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pww{position:relative;}
+.pwb{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:11.5px;color:var(--text3);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;}
+.pwb:hover{color:var(--blue);}
+.fi.pwp{padding-right:70px;}
+.fe{font-size:11px;color:#e53e3e;margin-top:4px;display:none;}
+.str{height:3px;border-radius:2px;margin-top:5px;background:var(--border);transition:all .3s;}
+.sh{font-size:11px;color:var(--text3);margin-top:3px;}
+.ea{background:#fff5f5;border:1.5px solid #fed7d7;border-radius:var(--r);padding:11px 13px;font-size:13px;color:#c53030;margin-bottom:15px;display:flex;align-items:flex-start;gap:8px;}
+.btn{width:100%;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;border-radius:var(--r);padding:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(21,101,192,.35);}
+.ll{text-align:center;font-size:12.5px;color:var(--text3);margin-top:13px;}
+.ll a{color:var(--blue);font-weight:700;}
+/* NIVEL OPTS */
+.no{border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all .18s;margin-bottom:9px;position:relative;background:#fff;}
+.no:hover{border-color:var(--blue);transform:translateX(3px);}
+.no.sd{border-color:#2e7d32;background:#f0fdf4;}
+.no.si{border-color:var(--blue);background:#eff6ff;}
+.no.sa{border-color:var(--orange);background:#fff7ed;}
+.no input{position:absolute;opacity:0;pointer-events:none;}
+.noh{display:flex;align-items:center;gap:9px;margin-bottom:4px;}
+.noi{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.no.bd .noi{background:#e8f5e9;}.no.id .noi{background:#e3f2fd;}.no.ad .noi{background:#fff3e0;}
+.non{font-size:13.5px;font-weight:700;color:var(--text);}
+.noc{margin-left:auto;width:19px;height:19px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;}
+.no.sd .noc{background:#2e7d32;border-color:#2e7d32;color:#fff;}
+.no.si .noc{background:var(--blue);border-color:var(--blue);color:#fff;}
+.no.sa .noc{background:var(--orange);border-color:var(--orange);color:#fff;}
+.nod{font-size:11.5px;color:var(--text3);line-height:1.5;margin-left:43px;}
+.nom{margin-left:43px;margin-top:6px;display:none;}
+.no.sd .nom,.no.si .nom,.no.sa .nom{display:block;}
+.nm{font-size:11px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:5px;}
+.nm::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.bd .nm::before{background:#2e7d32;}.id .nm::before{background:var(--blue);}.ad .nm::before{background:var(--orange);}
+.tip{margin-top:14px;padding:11px;background:#fffbeb;border:1px solid #fde68a;border-radius:9px;font-size:11.5px;color:#92400e;line-height:1.6;}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="pw">
+  <a href="{{ url_for('auth.index') }}" class="back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Volver al inicio
+  </a>
+  <div class="card">
+    <div class="ch">
+      <div class="lr"><div class="li">C++</div><div class="ln">C++<span>Academy</span></div></div>
+      <h1>Crear tu cuenta</h1>
+      <p>Registrate y comienza a aprender C++ hoy mismo.</p>
+    </div>
+    <div class="cb">
+      <div class="fs">
+        <div class="st">Tus datos</div>
+        {% if error %}<div class="ea"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{{ error }}</div>{% endif %}
+        <form method="POST" action="{{ url_for('auth.registro') }}" novalidate id="rf">
+          <input type="hidden" name="nivel" id="nh" value="{{ datos.get('nivel','desde_cero') }}">
+          <div class="frow">
+            <div class="fg"><label class="fl">Nombre</label><input class="fi" type="text" id="nom" name="nombre" placeholder="Tu nombre" value="{{ datos.get('nombre','') }}" required><div class="fe" id="e-n">Requerido.</div></div>
+            <div class="fg"><label class="fl">Apellido</label><input class="fi" type="text" id="ape" name="apellido" placeholder="Tu apellido" value="{{ datos.get('apellido','') }}" required><div class="fe" id="e-a">Requerido.</div></div>
+          </div>
+          <div class="fg"><label class="fl">Correo electronico</label><input class="fi" type="email" id="em" name="email" placeholder="tucorreo@email.com" value="{{ datos.get('email','') }}" required><div class="fe" id="e-em">Correo invalido.</div></div>
+          <div class="fg"><label class="fl">Contrasena</label><div class="pww"><input class="fi pwp" type="password" id="pw1" name="password" placeholder="Minimo 6 caracteres" required><button type="button" class="pwb" onclick="tp('pw1',this)">Mostrar</button></div><div class="str" id="str"></div><div class="sh" id="sh">Escribe tu contrasena</div><div class="fe" id="e-pw">Minimo 6 caracteres.</div></div>
+          <div class="fg"><label class="fl">Confirmar contrasena</label><div class="pww"><input class="fi pwp" type="password" id="pw2" name="confirm" placeholder="Repite la contrasena" required><button type="button" class="pwb" onclick="tp('pw2',this)">Mostrar</button></div><div class="fe" id="e-c">No coinciden.</div></div>
+          <button class="btn" type="submit" id="sb">Crear mi cuenta</button>
+        </form>
+        <div class="ll">Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesion</a></div>
+      </div>
+      <div class="ls">
+        <div class="st">Elige tu nivel de entrada</div>
+        <div class="no bd {% if datos.get('nivel','desde_cero')=='desde_cero' %}sd{% endif %}" id="o-d" onclick="sn('desde_cero')">
+          <input type="radio" name="nv" value="desde_cero">
+          <div class="noh"><div class="noi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="non">Desde cero</div><div class="noc" id="c-d">{% if datos.get('nivel','desde_cero')=='desde_cero' %}<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>{% endif %}</div></div>
+          <div class="nod">Sin experiencia. Aprendes C++ desde cero hasta temas avanzados.</div>
+          <div class="nom"><div class="nm">Modulos 1 al 9 (todos)</div><div class="nm">Variables, Control, Funciones, Clases</div></div>
+        </div>
+        <div class="no id {% if datos.get('nivel','')=='intermedio' %}si{% endif %}" id="o-i" onclick="sn('intermedio')">
+          <input type="radio" name="nv" value="intermedio">
+          <div class="noh"><div class="noi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="non">Ya se programar</div><div class="noc" id="c-i">{% if datos.get('nivel','')=='intermedio' %}<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>{% endif %}</div></div>
+          <div class="nod">Conoces programacion basica. Entras a funciones, clases y temas avanzados.</div>
+          <div class="nom"><div class="nm">Modulos 4 al 9</div><div class="nm">Funciones, Clases y temas avanzados</div></div>
+        </div>
+        <div class="no ad {% if datos.get('nivel','')=='avanzado' %}sa{% endif %}" id="o-a" onclick="sn('avanzado')">
+          <input type="radio" name="nv" value="avanzado">
+          <div class="noh"><div class="noi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e65100" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><div class="non">Reforzar C++</div><div class="noc" id="c-a">{% if datos.get('nivel','')=='avanzado' %}<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>{% endif %}</div></div>
+          <div class="nod">Ya conoces C++. Practica los temas mas avanzados del lenguaje.</div>
+          <div class="nom"><div class="nm">Modulos 7, 8 y 9</div><div class="nm">Temas avanzados de C++</div></div>
+        </div>
+        <div class="tip"><strong>Consejo:</strong> Si dudas, elige <strong>Desde cero</strong>. Siempre puedes avanzar mas rapido si el contenido ya lo dominas.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function tp(id,btn){const i=document.getElementById(id);const s=i.type==='password';i.type=s?'text':'password';btn.textContent=s?'Ocultar':'Mostrar';}
+const CLR={'desde_cero':'sd','intermedio':'si','avanzado':'sa'};
+const IDS={'desde_cero':'o-d','intermedio':'o-i','avanzado':'o-a'};
+const CHK={'desde_cero':'c-d','intermedio':'c-i','avanzado':'c-a'};
+function sn(v){
+  ['desde_cero','intermedio','avanzado'].forEach(k=>{
+    const el=document.getElementById(IDS[k]);
+    el.className=el.className.replace(/\b(sd|si|sa)\b/g,'').trim();
+    document.getElementById(CHK[k]).innerHTML='';
+  });
+  document.getElementById(IDS[v]).classList.add(CLR[v]);
+  document.getElementById(CHK[v]).innerHTML='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+  document.getElementById('nh').value=v;
+}
+const p=new URLSearchParams(window.location.search);
+const nv=p.get('nivel');
+if(nv&&['desde_cero','intermedio','avanzado'].includes(nv))sn(nv);
+document.getElementById('pw1').addEventListener('input',function(){
+  const v=this.value;const b=document.getElementById('str');const l=document.getElementById('sh');
+  let s=0;if(v.length>=6)s++;if(v.length>=10)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const c=['','#e53e3e','#dd6b20','#d69e2e','#2e7d32','#2e7d32'];
+  const t=['','Muy debil','Debil','Regular','Fuerte','Muy fuerte'];
+  b.style.background=c[s]||'#e2e8f0';b.style.width=(s*20)+'%';
+  l.textContent=t[s]||'Escribe';l.style.color=c[s]||'#a0aec0';
+});
+document.getElementById('rf').addEventListener('submit',function(e){
+  let ok=true;
+  [['nom','e-n',v=>v.trim().length>0],['ape','e-a',v=>v.trim().length>0],
+   ['em','e-em',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)],
+   ['pw1','e-pw',v=>v.length>=6]].forEach(([id,eid,chk])=>{
+    const v=document.getElementById(id).value;const el=document.getElementById(eid);
+    if(!chk(v)){el.style.display='block';document.getElementById(id).classList.add('err');ok=false;}
+    else{el.style.display='none';document.getElementById(id).classList.remove('err');}
+  });
+  const p1=document.getElementById('pw1').value,p2=document.getElementById('pw2').value;
+  const ep2=document.getElementById('e-c');
+  if(p1!==p2){ep2.style.display='block';document.getElementById('pw2').classList.add('err');ok=false;}
+  else ep2.style.display='none';
+  if(!ok){e.preventDefault();return;}
+  const b=document.getElementById('sb');
+  b.innerHTML='<div class="spin"></div> Creando tu cuenta...';b.disabled=true;
+});
+</script>
+</body>
+</html>
