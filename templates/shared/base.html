@@ -1,1 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{% block title %}C++ Academy{% endblock %} — Aprende C++</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a3a6b;--navy2:#1e4d8c;
+  --blue:#1e88e5;--blue2:#1565c0;--blue-light:#64b5f6;
+  --teal:#00897b;--green:#2e7d32;--green-light:#e8f5e9;
+  --amber:#e65100;--amber-light:#fff3e0;
+  --red:#c62828;--red-light:#ffebee;
+  --text:#1a202c;--text2:#4a5568;--text3:#a0aec0;
+  --border:#e2e8f0;--surface:#f8fafc;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+button{cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+input,select{font-family:'Plus Jakarta Sans',sans-serif;}
+.app-shell{display:flex;min-height:100vh;}
 
+/* SIDEBAR */
+.sidebar{width:252px;flex-shrink:0;background:linear-gradient(180deg,#0f2954 0%,#1a3a6b 60%,#1e4d8c 100%);display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;z-index:100;box-shadow:4px 0 20px rgba(0,0,0,.15);}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;
+  border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--blue2),var(--blue-light));
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-logo-name{font-size:16px;font-weight:800;color:#fff;}
+.sb-logo-name span{color:var(--blue-light);}
+.sb-nav{flex:1;padding:14px 10px;overflow-y:auto;}
+.sb-nav::-webkit-scrollbar{width:3px;}
+.sb-nav::-webkit-scrollbar-track{background:transparent;}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.sb-sec{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.28);padding:14px 8px 5px;}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,.6);transition:all .14s;margin-bottom:1px;position:relative;}
+.sb-link:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);}
+.sb-link.active{background:linear-gradient(135deg,rgba(21,101,192,.5),rgba(66,165,245,.2));color:#fff;}
+.sb-link.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:55%;background:var(--blue-light);border-radius:0 3px 3px 0;}
+.sb-link svg{width:15px;height:15px;opacity:.6;flex-shrink:0;}
+.sb-link.active svg{opacity:1;}
+.sb-link-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;opacity:.4;min-width:18px;}
+.mod-status{margin-left:auto;width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ms-done{background:#4caf50;}.ms-active{background:var(--blue-light);}.ms-lock{background:rgba(255,255,255,.15);}
+.sb-foot{padding:12px;border-top:1px solid rgba(255,255,255,.07);}
+.sb-user{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-light));
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+.sb-uinfo{flex:1;min-width:0;}
+.sb-uname{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;}
+.sb-urole{font-size:10px;color:var(--blue-light);margin-top:1px;font-weight:600;}
+.sb-logout{background:none;border:none;color:rgba(255,255,255,.3);padding:4px;
+  border-radius:6px;transition:all .14s;flex-shrink:0;}
+.sb-logout:hover{color:#ef5350;background:rgba(239,83,80,.15);}
+
+/* MAIN */
+.main-area{margin-left:252px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 28px;
+  border-bottom:1px solid rgba(30,88,200,.1);background:rgba(255,255,255,.95);
+  backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 8px rgba(0,0,0,.06);}
+.topbar-title{font-size:15px;font-weight:800;color:var(--navy);}
+.topbar-pills{display:flex;align-items:center;gap:8px;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.pill-amber{background:var(--amber-light);color:var(--amber);}
+.pill-blue{background:#e3f2fd;color:var(--blue);}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.page-content{padding:26px 28px;flex:1;}
+
+/* FLASH */
+.flash-list{list-style:none;margin-bottom:16px;}
+.flash-item{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:6px;border:1px solid;font-weight:500;}
+.flash-success{background:var(--green-light);border-color:#a5d6a7;color:var(--green);}
+.flash-info{background:#e3f2fd;border-color:#90caf9;color:var(--blue);}
+.flash-error{background:var(--red-light);border-color:#ef9a9a;color:var(--red);}
+
+/* COMPONENTS */
+.card{background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;box-shadow:var(--shadow);}
+.card-body{padding:20px;}
+.card-head{padding:13px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:13.5px;font-weight:700;color:var(--text);}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:15px;font-weight:800;color:var(--navy);}
+.text-muted{color:var(--text3);font-size:13px;}
+.form-group{margin-bottom:15px;}
+.form-label{display:block;font-size:10.5px;font-weight:700;color:var(--text2);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase;}
+.form-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 13px;font-size:14px;color:var(--text);outline:none;transition:all .18s;}
+.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,.08);background:#fff;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;
+  border-radius:var(--r);font-size:13.5px;font-weight:700;border:none;transition:all .18s;cursor:pointer;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(21,101,192,.3);}
+.btn-secondary{background:var(--surface);color:var(--text2);border:1.5px solid var(--border);}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #ffcdd2;}
+.btn-danger:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-full{width:100%;}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+.tag-green{background:var(--green-light);color:var(--green);}
+.tag-amber{background:var(--amber-light);color:var(--amber);}
+.tag-red{background:var(--red-light);color:var(--red);}
+.tag-indigo{background:#e8eaf6;color:#283593;}
+.prog-wrap{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:3px;transition:width .8s ease;}
+.prog-wrap.sm{height:4px;}.prog-wrap.xs{height:3px;}
+.code-block{background:#0d1b2a;border-radius:var(--r);padding:16px;font-family:'Space Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;position:relative;color:#e2e8f0;}
+.code-block::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--blue),var(--blue-light));}
+pre.code-block{white-space:pre;}
+.kw{color:#f48fb1;}.ty{color:#80cbc4;}.st{color:#f9a825;}.cm{color:#546e7a;font-style:italic;}
+.fn{color:#a5d6a7;}.nm{color:#ce93d8;}
+.info-box{background:#e3f2fd;border:1px solid #90caf9;border-radius:var(--r);padding:12px 15px;font-size:13px;color:#1565c0;line-height:1.6;margin:14px 0;}
+.analogy-box{background:#fff8e1;border:1px solid #ffe082;border-radius:var(--r);padding:12px 15px;font-size:13px;color:#6d4c41;margin:14px 0;}
+.data-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+.data-table th{background:var(--blue);color:#fff;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
+.data-table td{padding:8px 12px;border-bottom:1px solid var(--border);}
+.data-table tr:hover td{background:#e3f2fd;}
+.pillar-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.pillar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
+.pillar strong{color:var(--blue);display:block;margin-bottom:4px;font-size:13px;}
+.pillar p{font-size:12px;color:var(--text2);line-height:1.5;margin:0;}
+.mb-4{margin-bottom:16px;}.mt-4{margin-top:16px;}.mt-6{margin-top:24px;}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fu .4s ease both;}
+.anim-d1{animation-delay:.07s;}.anim-d2{animation-delay:.14s;}.anim-d3{animation-delay:.21s;}
+#toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--navy);border-radius:11px;
+  padding:12px 18px;display:none;align-items:center;gap:10px;font-size:13px;
+  max-width:310px;color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.2);}
+#toast.show{display:flex;animation:fu .3s ease both;}
+.toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.toast-ok .toast-dot{background:#4caf50;}
+.toast-err .toast-dot{background:#ef5350;}
+.toast-info .toast-dot{background:var(--blue-light);}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+{% if current_user is not none and current_user.id %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">C++</div>
+      <div class="sb-logo-name">C++<span>Academy</span></div>
+    </div>
+    <nav class="sb-nav">
+      {% if current_user.es_admin %}
+      <!-- NAV DE ADMINISTRADOR -->
+      <div class="sb-sec">Administracion</div>
+      <a href="{{ url_for('course.admin_panel') }}" class="sb-link {% if request.endpoint=='course.admin_panel' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Panel de estudiantes
+      </a>
+      <a href="{{ url_for('course.certificado') }}" class="sb-link {% if request.endpoint=='course.certificado' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Historial de certificados
+      </a>
+      <a href="{{ url_for('course.admin_crear_contenido') }}" class="sb-link {% if request.endpoint=='course.admin_crear_contenido' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Nuevo contenido
+      </a>
+      <div class="sb-sec">Vista de contenido</div>
+      {% else %}
+      <!-- NAV DE ESTUDIANTE -->
+      <div class="sb-sec">Principal</div>
+      <a href="{{ url_for('course.dashboard') }}" class="sb-link {% if request.endpoint=='course.dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Mi panel
+      </a>
+      <a href="{{ url_for('course.perfil') }}" class="sb-link {% if request.endpoint=='course.perfil' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Mi perfil
+      </a>
+      <a href="{{ url_for('course.certificado') }}" class="sb-link {% if request.endpoint=='course.certificado' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Certificado
+      </a>
+      {% if current_user.ruta_aprendizaje == 'avanzado' %}
+      <a href="{{ url_for('course.proyecto') }}" class="sb-link {% if request.endpoint=='course.proyecto' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Proyecto Final
+      </a>
+      {% endif %}
+      <div class="sb-sec">Mis modulos</div>
+      {% endif %}
+      {% set mnms={1:'Fundamentos',2:'Operadores',3:'Control de Flujo',4:'Funciones',5:'Intro a POO',6:'Clases y Objetos',7:'Encapsulamiento',8:'Herencia y Polimorf.',9:'Aplicaciones'} %}
+      {% set maccs=[] %}
+      {% for i in range(1,10) %}
+      <a href="{{ url_for('course.modulo', numero=i) }}"
+         class="sb-link {% if request.endpoint=='course.modulo' and request.view_args.numero==i %}active{% endif %}">
+        <span class="sb-link-num">{{ '%02d'|format(i) }}</span>
+        {{ mnms[i] }}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-av">{{ current_user.iniciales }}</div>
+        <div class="sb-uinfo">
+          <div class="sb-uname">{{ current_user.nombre }}</div>
+          <div class="sb-urole">
+            {% if current_user.ruta_aprendizaje=='desde_cero' %}Desde cero
+            {% elif current_user.ruta_aprendizaje=='intermedio' %}Nivel intermedio
+            {% else %}Nivel avanzado{% endif %}
+            &middot; {{ current_user.xp }} XP</div>
+        </div>
+        <a href="{{ url_for('auth.logout') }}" class="sb-logout" title="Salir">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </a>
+      </div>
+    </div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-title">{% block page_title %}C++ Academy{% endblock %}</div>
+      <div class="topbar-pills">
+        <span class="pill pill-amber"><span class="pill-dot"></span>{{ current_user.racha }} dias racha</span>
+        <span class="pill pill-blue"><span class="pill-dot"></span>{{ current_user.xp }} XP</span>
+      </div>
+    </header>
+    <main class="page-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<ul class="flash-list">{% for cat,msg in messages %}<li class="flash-item flash-{{ cat }}">{{ msg }}</li>{% endfor %}</ul>{% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+{% block auth_content %}{% endblock %}
+{% endif %}
+<div id="toast"><span class="toast-dot"></span><span id="toast-msg"></span></div>
+<script>
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.className='show toast-'+(type||'info');
+  clearTimeout(window._tt);
+  window._tt=setTimeout(()=>t.className='',3200);
+}
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
